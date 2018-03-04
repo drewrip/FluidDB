@@ -113,6 +113,40 @@ public:
 		return boats;
 	}
 
+	static void rmBoat(string liqname, string boatname){
+		string liqData = readLiq(liqname);
+		char temp;
+		string tempName = "";
+		string newBoat = "";
+		bool shouldParse = true;
+		for(int i = 0; i<liqData.length(); i++){
+			temp = liqData[i];
+			if(temp == '{'){
+				if(!shouldParse){
+					shouldParse = true;
+				}
+				else{
+					for(int j = i+2; j<boatname.length(); j++){
+						temp = liqData[j];
+						tempName+=temp;
+					}
+					if(temp == boatName){
+						shouldParse = false;
+					}
+				}
+			}
+			if(shouldParse){
+				newBoat+=temp;
+			}
+		}
+		ofstream ofs;
+		ofs.open(dir+liqname+ext, ios::write);
+		ofs.write('', 0);
+		ofs.close();
+		ofs.open(dir+liqName+ext, ios::app);
+		ofs<<newBoat<<endl;
+	}
+
 	static void rmLiq(string lName){
 		remove((dir+lName+ext).c_str());
 	}
