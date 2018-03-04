@@ -1,5 +1,6 @@
 #include <iostream>
 #include "rpc/server.h"
+#include "FluidDB.h"
 
 using namespace std;
 
@@ -10,24 +11,27 @@ void foo() {
 int main(int argc, char *argv[]) {
 	// Creating a server that listens on port 8080
 	rpc::server srv(8080);
-
+	Boat boat;
+	json j;
 	srv.bind("getboat", [](string liqname, string boatname){
-		return "boat gotten";
+		return boat.open(liqname, boatname).dump();
 	});
 
-	srv.bind("getboatbyindex", [](string liqname, string index){
-		return "boat gotten by index";
+	srv.bind("getboatbyindex", [](string newname, string index){
+		return boat.getboatbyindex(index, newname);
 	});
 
 	srv.bind("getnumberboats", [](string liqname){
-		return "There are 4 databases in this liq";
+		return Liq::allBoats(liqname).size();
 	});
 
-	srv.bind("makeboat", [](string liqname, string boatname){
-		return "Boat created!";
+	srv.bind("makeboat", [](string liqname, string boatname, string data){
+		boat.makeboat(liqname, boatname, data);
+		return "Boat Created."
 	});
 
 	srv.bind("makeliq", [](string liqname){
+		Liq::makeLiq(liqname);
 		return "Created liq";
 	});
 
@@ -36,21 +40,30 @@ int main(int argc, char *argv[]) {
 	});
 
 	srv.bind("removeliq", [](string liqname){
-		return "Removed liq";
+		Liq::rmLiq(liqname);
+		return "Removed liq.";
 	});
 
-	srv.bind("adddata", [](string liqname, string boatname, string jData){
-		return "Database altered";
+	srv.bind("append", [](string key, string pair){
+		boat.append(key, pair);
+		return "Database appended";
 	});
 
-	srv.bind("removedata", [](string liqname, string boatname, string jData){
+	srv.bind("removedata", [](string pathtoremove){
+		boat.removeddata(pathtoremove);
 		return "Data Removed";
 	});
 
-	srv.bind("changedata", [](string liqname, string boatname, string jData){
-		return "Data Changed";
+	srv.bind("changedata", [](string pathtopointer, string newdata){
+		boat.changedata(pathtopointer, newdata);
+		return "Data Altered";
 	});
-	// Run the server loop.
+
+	srv.close("close"){
+		boat.close();
+		return "FluidDB Closed."
+	}
+
 	srv.run();
 
 	return 0;
