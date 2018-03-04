@@ -89,6 +89,10 @@ public:
 		return stringify(parseBoat(liqData,charNum));
 	}
 
+	static void rmLiq(string lName){
+		remove((dir+lName+ext).c_str());
+	}
+
 private:
 	static string hexify(const string& input){
 		static const char* const lut = "0123456789ABCDEF";
