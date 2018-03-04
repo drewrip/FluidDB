@@ -140,8 +140,8 @@ public:
 			}
 		}
 		ofstream ofs;
-		ofs.open(dir+liqname+ext, ios::write);
-		ofs.write('', 0);
+		ofs.open(dir+liqname+ext, ios::trunk);
+		ofs.write();
 		ofs.close();
 		ofs.open(dir+liqName+ext, ios::app);
 		ofs<<newBoat<<endl;
