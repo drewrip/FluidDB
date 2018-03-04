@@ -4,15 +4,17 @@ from flask_restful import Resource, Api, reqparse
 app = Flask(__name__)
 api = Api(app)
 
-methods = ["adddata", "removedata", "changedata", "getboat", "makeboat", "removeboat", "getboatbyindex", "getnumberboats", "makeliq", "removeliq"]
+methods = ["makeboat", "changedata", "getboat", "removeboat", "getboatbyindex", "getnumberboats", "makeliq", "removedata", "removeliq", "close"]
 
 def callBack(paramNum, params):
 	client = msgpackrpc.Client(msgpackrpc.Address("localhost", 8080))
-	if(paramNum >= 0 and paramNum <= 2):
+	if(paramNum == 9):
+		result = client.call(methods[paramNum])
+	if(paramNum == 0):
 		result = client.call(methods[paramNum], params[0], params[1], params[2]) 
-	elif(paramNum >= 3 and paramNum <= 6):
+	elif(paramNum >= 1 and paramNum <= 4):
 		result = client.call(methods[paramNum], params[0], params[1])
-	elif(paramNum >= 7 and paramNum <= 9):
+	elif(paramNum >= 5 and paramNum <= 8):
 		result = client.call(methods[paramNum], params[0])
 	return result
 
