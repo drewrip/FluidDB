@@ -11,7 +11,6 @@ using namespace std;
 int main(int argc, char * argv[]){
 
 	int port = 8080;
-	string addr = "127.0.0.1";
 
 	for(int i = 1; i < argc; i++){
 		string currarg = argv[i];
@@ -20,14 +19,9 @@ int main(int argc, char * argv[]){
 		if(currarg == "-p"){
 			port = atoi(argv[i+1]);
 		}
-		else if(currarg == "-a"){
-			addr = argv[i+1];
-		}
-		else{
-		}
 	}
 	rpc::server srv(port);
-	cout << "Starting FluidDB RPC server on " << addr << ":" << port << std::endl;
+	cout << "Starting FluidDB RPC server on port " << port << std::endl;
 
 
     srv.bind("getboat", [](string liqname, string boatname){
@@ -40,45 +34,45 @@ int main(int argc, char * argv[]){
         return jstr;
     });
 
-    srv.bind("getboatbyindex", [](string liqname, int index){
+    srv.bind("getboatbyindex", [](vector<string> v){
     	ostringstream details;
-    	details << liqname << "[" << index << "]";
+    	details << v[1] << "[" << stoi(v[2]) << "]";
     	return details.str();
     });
 
-    srv.bind("getnumberboats", [](string liqname){
+    srv.bind("getnumberboats", [](vector<string> v){
     	return "There are 4 databases in this liq";
     });
 
-    srv.bind("makeboat", [](string liqname, string boatname){
+    srv.bind("makeboat", [](vector<string> v){
     	return "Boat created!";
     });
 
-    srv.bind("makeliq", [](string liqname){
+    srv.bind("makeliq", [](vector<string> v){
     	return "Created liq";
     });
 
-    srv.bind("removeboat", [](string liqname, string boatname){
+    srv.bind("removeboat", [](vector<string> v){
 
     	return "Removed boat";
     });
 
-    srv.bind("removeliq", [](string liqname){
+    srv.bind("removeliq", [](vector<string> v){
 
     	return "Removed liq";
     });
 
-    srv.bind("adddata", [](string liqname, string boatname, string jsondata){
+    srv.bind("adddata", [](vector<string> v){
 
     	return "Database altered";
     });
 
-    srv.bind("removedata", [](string liqname, string boatname, string jsondata){
+    srv.bind("removedata", [](vector<string> v){
 
     	return "Data Removed";
     });
 
-    srv.bind("changedata", [](string liqname, string boatname, string jsondata){
+    srv.bind("changedata", [](vector<string> v){
 
     	return "Data Changed";
     });
