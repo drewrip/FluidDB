@@ -5,10 +5,12 @@
 #include <cstdio>
 #include <string>
 #include <nlohmann/json.hpp>
+#include <vector>
 
 using namespace std;
 using json = nlohmann::json;
 using std::string;
+using std::vector;
 
 #ifndef LIQ_H
 #define LIQ_H
@@ -30,15 +32,7 @@ public:
 	}
 	
 	static string readFile(string lName, string jName){
-		string liqData = "";
-		if(std::ifstream is{dir+lName+ext, std::ios::binary | std::ios::ate}) {
-			auto size = is.tellg();
-			std::string str(size, '\0');
-			is.seekg(0);
-			if(is.read(&str[0], size)){
-				liqData+=str;
-			}
-		}
+		string liqData = readLiq(lName);
 		string boat = "";
 		int bLength = jName.length();
 		char temp;
@@ -63,15 +57,7 @@ public:
 	}
 
 	static string get(string lName, int index){
-		string liqData = "";
-		if(std::ifstream is{dir+lName+ext, std::ios::binary | std::ios::ate}) {
-			auto size = is.tellg();
-			std::string str(size, '\0');
-			is.seekg(0);
-			if(is.read(&str[0], size)){
-				liqData+=str;
-			}
-		}
+		string liqData = readLiq(lName);
 		char temp;
 		int currInd = -1;
 		int charNum = -1;
@@ -89,6 +75,28 @@ public:
 		}
 		charNum++;
 		return stringify(parseBoat(liqData,charNum));
+	}
+
+	static vector<string> allBoats(string liqName){
+		vector<string> boats;
+		string boatName = "";
+		string liqData = readLiq(liqName);
+		int liqLen = liqData.length();
+		char temp;
+		for(int i = 0; i<liqLen; i++){
+			temp = liqData[i];
+			int newI = i+2;
+			if(temp=='{'){
+				while(liqData[newI] != '\n'){
+					boatName+=liqData[newI];
+					newI++;
+				}
+				boats.push_back(boatName);
+				boatName = "";
+				i = newI;
+			}
+		}
+		return boats;
 	}
 
 	static void rmLiq(string lName){
@@ -125,6 +133,20 @@ private:
 		}
 		return output;
 	}
+
+	static string readLiq(string liqName){
+		string liqData = "";
+		if(std::ifstream is{dir+liqName+ext, std::ios::binary | std::ios::ate}) {
+			auto size = is.tellg();
+			std::string str(size, '\0');
+			is.seekg(0);
+			if(is.read(&str[0], size)){
+				liqData+=str;
+			}
+		}
+		return liqData;
+	}
+
 	static string parseBoat(string& fullString, int charNum){
 		string jData = "";
 		char tempChar = fullString[charNum];
