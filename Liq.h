@@ -2,6 +2,7 @@
 #include <sstream>
 #include <fstream>
 #include <sys/stat.h>
+#include <cstdio>
 #include <string>
 
 using namespace std;
@@ -56,8 +57,38 @@ public:
 
 		}
 
-		return "NULL";
+		return "";
 	}
+
+	static string get(string lName, int index){
+		string liqData = "";
+		if(std::ifstream is{dir+lName+ext, std::ios::binary | std::ios::ate}) {
+			auto size = is.tellg();
+			std::string str(size, '\0');
+			is.seekg(0);
+			if(is.read(&str[0], size)){
+				liqData+=str;
+			}
+		}
+		char temp;
+		int currInd = -1;
+		int charNum = -1;
+		while(currInd<index){
+			charNum++;
+			temp = liqData[charNum];
+			if(temp =='{'){
+				currInd++;
+			}
+		}
+		charNum++;
+		while(temp != '\n'){
+			charNum++;
+			temp = liqData[charNum];
+		}
+		charNum++;
+		return stringify(parseBoat(liqData,charNum));
+	}
+
 private:
 	static string hexify(const string& input){
 		static const char* const lut = "0123456789ABCDEF";
@@ -88,7 +119,6 @@ private:
 		}
 		return output;
 	}
-
 	static string parseBoat(string& fullString, int charNum){
 		string jData = "";
 		char tempChar = fullString[charNum];
