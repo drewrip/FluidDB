@@ -56,9 +56,10 @@ public:
 		return "";
 	}
 
-	static string get(string lName, int index){
+	static vector<string> get(string lName, int index){
 		string liqData = readLiq(lName);
 		char temp;
+		string boatName = "";
 		int currInd = -1;
 		int charNum = -1;
 		while(currInd<index){
@@ -66,15 +67,24 @@ public:
 			temp = liqData[charNum];
 			if(temp =='{'){
 				currInd++;
+
 			}
 		}
 		charNum++;
 		while(temp != '\n'){
+			boatName+=temp;
 			charNum++;
 			temp = liqData[charNum];
 		}
 		charNum++;
-		return stringify(parseBoat(liqData,charNum));
+		vector<string> boatVec;
+		string newBoatString = "";
+		for(int i = 1; i<boatName.length(); i++){
+			newBoatString+=boatName[i];
+		}
+		boatVec.push_back(newBoatString);
+		boatVec.push_back(stringify(parseBoat(liqData,charNum)));
+		return boatVec;
 	}
 
 	static vector<string> allBoats(string liqName){
