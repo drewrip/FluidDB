@@ -4,8 +4,10 @@
 #include <sys/stat.h>
 #include <cstdio>
 #include <string>
+#include <nlohmann/json.hpp>
 
 using namespace std;
+using json = nlohmann::json;
 using std::string;
 
 #ifndef LIQ_H
