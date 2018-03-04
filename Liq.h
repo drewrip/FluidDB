@@ -6,6 +6,7 @@
 #include <string>
 #include <nlohmann/json.hpp>
 #include <vector>
+#include "FluidDB.h"
 
 using namespace std;
 using json = nlohmann::json;
@@ -130,7 +131,7 @@ public:
 						temp = liqData[j];
 						tempName+=temp;
 					}
-					if(temp == boatName){
+					if(tempName == boatname){
 						shouldParse = false;
 					}
 				}
@@ -140,10 +141,10 @@ public:
 			}
 		}
 		ofstream ofs;
-		ofs.open(dir+liqname+ext, ios::trunk);
-		ofs.write();
+		ofs.open(dir+liqname+ext, ofstream::trunc);
+		ofs.write("", 1);
 		ofs.close();
-		ofs.open(dir+liqName+ext, ios::app);
+		ofs.open(dir+liqname+ext, ios::app);
 		ofs<<newBoat<<endl;
 	}
 
