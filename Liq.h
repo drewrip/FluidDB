@@ -25,6 +25,10 @@ public:
 
 		ofstream fileObj;
 		fileObj.open(dir+lName+ext, ios::app);
+		if(jName == "" && jData == ""){
+			fileObj.close();
+			return;
+		}
 		fileObj<<"{"<<endl<<jName<<endl;
 		fileObj<<hexify(jData)<<endl;
 		fileObj<<"}"<<endl;
@@ -101,6 +105,10 @@ public:
 
 	static void rmLiq(string lName){
 		remove((dir+lName+ext).c_str());
+	}
+
+	static void makeLiq(string liqname){
+		writeFile(liqname , "", "");
 	}
 
 private:
